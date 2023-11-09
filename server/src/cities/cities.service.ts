@@ -17,7 +17,11 @@ export class CitiesService extends TypeOrmQueryService<City> {
     super(repo, { useSoftDelete: true });
   }
 
-  async findCities() {
+  findCities() {
+    return this.repo.find();
+  }
+
+  async findAlerts() {
     const { data: alerts } = await firstValueFrom(
       this.httpService
         .get(
