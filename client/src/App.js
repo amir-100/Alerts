@@ -28,14 +28,35 @@ function App() {
 
   const synth = window.speechSynthesis;
 
+  // const speakText = () => {
+  //   const speech = new SpeechSynthesisUtterance();
+  //   speech.lang = "en-US";
+
+  //   textArray.forEach((text, index) => {
+  //     speech.text = text;
+  //     speech.rate = 1.0; // Adjust the rate as needed
+
+  //     // Speak each sentence in sequence
+  //     speech.onend = () => {
+  //       if (index + 1 < textArray.length) {
+  //         speech.text = textArray[index + 1];
+  //         window.speechSynthesis.speak(speech);
+  //       }
+  //     };
+
+  //     window.speechSynthesis.speak(speech);
+  //   });
+  // };
+
   const speak = () => {
-    if (synth.speaking) {
-      console.error("SpeechSynthesis already speaking");
-      return;
-    }
+    // if (synth.speaking) {
+    //   console.error("SpeechSynthesis already speaking");
+    //   return;
+    // }
 
     alerts.forEach(({ name }) => {
-      const utterance = new SpeechSynthesisUtterance(name);
+      const utterance = new SpeechSynthesisUtterance(`אזעקה ב${name}`);
+      utterance.lang = "he-IL";
 
       synth.speak(utterance);
     });
@@ -63,10 +84,10 @@ function App() {
   //     };
   //   }
   // }, [alertedAreas, setAlertedAreas]);
-  setInterval(() => {
-    speak();
-  }, 1000);
-  console.log("asdsad");
+  // setInterval(() => {
+  speak();
+  // }, 1000);
+
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
       <MapContainer
@@ -92,10 +113,7 @@ function App() {
           <Polygon
             key={city.id}
             positions={city.shape.coordinates}
-            fillColor="red"
-            opacity={1}
             fillOpacity={0.3}
-            color={showAreas ? "#5f0021" : "#ab003c"}
           >
             <Popup>{city.name}</Popup>
           </Polygon>
@@ -105,7 +123,6 @@ function App() {
             key={showAreas ? alert.id : alert.id * -1}
             positions={alert.shape.coordinates}
             fillColor="red"
-            opacity={1}
             fillOpacity={0.3}
             color={showAreas ? "#5f0021" : "#ab003c"}
           >
