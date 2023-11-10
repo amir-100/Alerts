@@ -7,6 +7,25 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { HttpService } from '@nestjs/axios';
 
+type Alert = {
+  alertDate: string;
+  title: string;
+  data: string;
+  category: number;
+};
+
+const filterAlertsByLastXMinutes = (alerts: Alert[], minutes: number) => {
+  const currentTime = new Date();
+  const startTime = new Date(currentTime.getTime() - minutes * 60000);
+  const filteredAlerts = alerts.filter((alert) => {
+    const alertDate = new Date(alert.alertDate);
+
+    return alertDate >= startTime && alertDate <= currentTime;
+  });
+
+  return filteredAlerts;
+};
+
 @Injectable()
 export class CitiesService extends TypeOrmQueryService<City> {
   constructor(
@@ -35,7 +54,8 @@ export class CitiesService extends TypeOrmQueryService<City> {
         ),
     );
 
-    const alertedAreas = alerts.map(({ data }) => data);
+    const filteredAlerts = filterAlertsByLastXMinutes(alerts, 5);
+    const alertedAreas = filteredAlerts.map(({ data }) => data);
 
     return this.repo.find({
       where: { name: In(alertedAreas) },
