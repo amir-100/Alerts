@@ -14,7 +14,7 @@ export const config = () => ({
     ssl: false,
     entities: [City],
     // synchronize: true,
-    logging: 'all',
+    // logging: 'all',
     namingStrategy: new SnakeNamingStrategy(),
   },
 });
