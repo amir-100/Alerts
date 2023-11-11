@@ -88,6 +88,12 @@ function App() {
   speak();
   // }, 1000);
 
+  const getFilteredCities = () => {
+    const alertIdSet = new Set(alerts.map(({ id }) => id));
+    const filteredCities = cities.filter(({ id }) => !alertIdSet.has(id));
+
+    return filteredCities;
+  };
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
       <MapContainer
@@ -109,7 +115,7 @@ function App() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {cities.map((city) => (
+        {getFilteredCities().map((city) => (
           <Polygon
             key={city.id}
             positions={city.shape.coordinates}
@@ -124,7 +130,8 @@ function App() {
             positions={alert.shape.coordinates}
             fillColor="red"
             fillOpacity={0.3}
-            color={showAreas ? "#5f0021" : "#ab003c"}
+            color="red"
+            // color={showAreas ? "#5f0021" : "#ab003c"}
           >
             <Popup>{alert.name}</Popup>
           </Polygon>
