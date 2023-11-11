@@ -4,8 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { HttpModule } from '@nestjs/axios';
 import { config } from './config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { City } from './cities/entities/city.entity';
 import { CitiesController } from './cities/cities.controller';
 import { CitiesService } from './cities/cities.service';
@@ -22,8 +20,8 @@ import { CitiesService } from './cities/cities.service';
     TypeOrmModule.forFeature([City]),
     HttpModule,
   ],
-  controllers: [AppController, CitiesController],
-  providers: [AppService, CitiesService],
+  controllers: [CitiesController],
+  providers: [CitiesService],
 })
 export class AppModule implements NestModule {
   constructor(private dataSource: DataSource) {}
