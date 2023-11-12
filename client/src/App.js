@@ -1,11 +1,42 @@
 import { useQuery } from "@tanstack/react-query";
-import { MapContainer, Polygon, Popup, TileLayer } from "react-leaflet";
+import {
+  MapContainer,
+  Marker,
+  Polygon,
+  Popup,
+  TileLayer,
+  useMap,
+} from "react-leaflet";
+import markerIconPng from "leaflet/dist/images/marker-icon.png";
+import { Icon } from "leaflet";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
 const ONE_SECOND = 1000;
 const CHECK_EXPIRE_TIME = ONE_SECOND * 1.5;
 const FLICKER_TIME = CHECK_EXPIRE_TIME / 2;
+
+function MapLocation() {
+  const [location, setLocation] = useState([]);
+  const map = useMap();
+
+  map.locate().on("locationfound", ({ latlng }) => {
+    setLocation([latlng.lat, latlng.lng]);
+  });
+
+  return location.length === 2 ? (
+    <Marker
+      position={location}
+      icon={
+        new Icon({
+          iconUrl: markerIconPng,
+        })
+      }
+    >
+      <Popup>מיקומך</Popup>
+    </Marker>
+  ) : null;
+}
 
 function App() {
   const [showAreas, setShowAreas] = useState(true);
@@ -25,8 +56,6 @@ function App() {
     placeholderData: [],
     refetchInterval: 10000,
   });
-
-  const synth = window.speechSynthesis;
 
   // const speakText = () => {
   //   const speech = new SpeechSynthesisUtterance();
@@ -49,18 +78,15 @@ function App() {
   // };
 
   const speak = () => {
-    // if (synth.speaking) {
-    //   console.error("SpeechSynthesis already speaking");
-    //   return;
-    // }
-
     alerts.forEach(({ name }) => {
       const utterance = new SpeechSynthesisUtterance(`אזעקה ב${name}`);
       utterance.lang = "he-IL";
 
-      synth.speak(utterance);
+      window.speechSynthesis.speak(utterance);
     });
   };
+
+  useEffect(speak, [alerts]);
 
   // const makeAreasFlicker = () => {
   //   setShowAreas(false);
@@ -84,9 +110,6 @@ function App() {
   //     };
   //   }
   // }, [alertedAreas, setAlertedAreas]);
-  // setInterval(() => {
-  speak();
-  // }, 1000);
 
   const getFilteredCities = () => {
     const alertIdSet = new Set(alerts.map(({ id }) => id));
@@ -115,6 +138,7 @@ function App() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        <MapLocation />
         {getFilteredCities().map((city) => (
           <Polygon
             key={city.id}
